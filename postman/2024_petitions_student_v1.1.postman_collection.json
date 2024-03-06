@@ -1,0 +1,5085 @@
+{
+	"info": {
+		"_postman_id": "7467408f-5ff3-41d8-b333-b8970e63a466",
+		"name": "2024_petitions_student",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19077832"
+	},
+	"item": [
+		{
+			"name": "BACKDOOR",
+			"item": [
+				{
+					"name": "HEARTBEAT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/heartbeat",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"heartbeat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /reset",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/reset",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"reset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /resample",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/resample",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"resample"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /executeSql",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "SELECT * FROM user;"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/executeSql",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"executeSql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /reload",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/reload",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"reload"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "POST /users/register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Expected response\", function() {\r",
+									"    pm.expect(pm.response.json().userId).to.be.a('number')\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"Mike\",\n\t\"lastName\": \"Wheeler\",\n\t\"email\": \"mike.wheeler@hawkinsmiddle.school.us\",\n\t\"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users/login (incorrect password)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"mike.wheeler@hawkinsmiddle.school.us\",\n\t\"password\": \"notthepassword\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users/login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Expected response\", function() {",
+									"    pm.expect(pm.response.json().token).to.be.a('string')",
+									"    pm.expect(pm.response.json().userId).to.be.a('number')",
+									"});",
+									"",
+									"pm.test(\"Set auth_token and user_id after login\", function() {",
+									"    const authToken = pm.response.json().token;",
+									"    if (typeof authToken !== \"undefined\") {",
+									"        pm.globals.set(\"auth_token\", authToken);",
+									"        pm.globals.set(\"test_token\", authToken);",
+									"    }",
+									"    const userId = pm.response.json().userId;",
+									"    if (typeof userId !== \"undefined\") {",
+									"        pm.globals.set(\"user_id\", userId);",
+									"    }",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"mike.wheeler@hawkinsmiddle.school.us\",\n\t\"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users/register (invalid email, already in use)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"Lucas\",\n\t\"lastName\": \"Sinclair\",\n\t\"email\": \"k@gmail.com\",\n\t\"password\": \"ranger\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users/register (empty last name)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"\",\n\t\"email\": \"johnj@gmail.com\",\n\t\"password\": \"ranger\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users/register (invalid email)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"Lucas\",\n\t\"lastName\": \"Sinclair\",\n\t\"email\": \"lucassinclair.gmail.com\",\n\t\"password\": \"ranger\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users/register (long email)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"John\",\n\t\"lastName\": \"Johnson\",\n    \"email\": \"jXeWxtnx9IBKwrL8vJCX8BjoIFaX0HP3pJGvFHsDRGg2QwKVSbVwg3NPwiwr0onEXIlz3oxaSvSsB2cgsnF7vzNSBaOtRe0YK5S6GI9SM7FFqQjYN5K9UZyeAlKT1hllaN5R0hymnKodY8v38jRdxhCU9NWcsTxViccsClLw18EJzX7q77f4yRMA5jOtWeCUHa7fs8UZWMb1XgyvCeo8e1JNmh73exNBMTB6KDx3NmaWqMYyZCr0q4w3ap1jdC1fz@example.com\",\n\t\"password\": \"ranger\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users/register (short password)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"John\",\n\t\"lastName\": \"Johnson\",\n    \"email\": \"johnj@gmail.com\",\n    \"password\": \"12345\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users/:id (NaN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 or 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 404]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"type": "text",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/users/NotANumber",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"NotANumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users/:id (me)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var expectedData = {\r",
+									"    \"firstName\": \"Mike\",\r",
+									"    \"lastName\": \"Wheeler\",\r",
+									"    \"email\": \"mike.wheeler@hawkinsmiddle.school.us\"\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Expected data\", function() {\r",
+									"    try {\r",
+									"        var data = pm.response.json()\r",
+									"        pm.expect(data.firstName).to.equal(\"Mike\")\r",
+									"        pm.expect(data.lastName).to.equal(\"Wheeler\")\r",
+									"        pm.expect(data.email).to.equal(\"mike.wheeler@hawkinsmiddle.school.us\")\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"    \r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users/:id (another user)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Expected data\", function() {\r",
+									"    try {\r",
+									"        var data = pm.response.json()\r",
+									"        pm.expect(data.firstName).to.equal(\"Kristy\")\r",
+									"        pm.expect(data.lastName).to.equal(\"Lincoln\")\r",
+									"        if(!data.hasOwnProperty(\"email\")){\r",
+									"            pm.expect(!data.hasOwnProperty(\"email\")).to.equal(true);\r",
+									"        } else {\r",
+									"            pm.expect.fail('Email is present')\r",
+									"        }\r",
+									"    } catch(err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/users/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /users/:id (NaN",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400, 403, or 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 403, 404]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\": \"new secure password\",\n\t\"currentPassword\": \"paladin\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/NotANumber",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"NotANumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /users/:id (me) (identical currentPassword and password)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\": \"password\",\n\t\"currentPassword\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /users/:id (me)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\": \"new secure password\",\n\t\"currentPassword\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /users/:id (me) (empty lastName)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"lastName\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /users/:id (me) (invalid email no top level comain)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"notan@email\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /users/:id (Unauthorized)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\": \"new secure password\",\n\t\"currentPassword\": \"paladin\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users/logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    if (responseCode.code === 200) {",
+									"        // pm.globals.set(\"auth_token\", null);",
+									"        // pm.globals.set(\"user_id\", null);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/logout",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[VALIDATE] GET /users/:id (me)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Token is not valid anymore\", function() {\r",
+									"    try {\r",
+									"        const body = pm.response.json()\r",
+									"        pm.expect(body).to.have.property(\"firstName\")\r",
+									"        pm.expect(body).to.have.property(\"lastName\")\r",
+									"        pm.expect(body).to.not.have.property(\"email\")\r",
+									"    } catch (err) {\r",
+									"        console.log(err)\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"    \r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users/login (new password)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// pm.test(\"Status code is 200\", function () {",
+									"//     pm.response.to.have.status(200);",
+									"// });",
+									"",
+									"// pm.test(\"Expected response\", function() {",
+									"//     pm.expect(pm.response.json().token).to.be.a('string')",
+									"//     pm.expect(pm.response.json().userId).to.be.a('number')",
+									"// });",
+									"",
+									"pm.test(\"Set auth_token and user_id after login\", function() {",
+									"    const authToken = pm.response.json().token;",
+									"    if (typeof authToken !== \"undefined\") {",
+									"        pm.globals.set(\"auth_token\", authToken);",
+									"        pm.globals.set(\"test_token\", authToken);",
+									"    }",
+									"    const userId = pm.response.json().userId;",
+									"    if (typeof userId !== \"undefined\") {",
+									"        pm.globals.set(\"user_id\", userId);",
+									"    }",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"mike.wheeler@hawkinsmiddle.school.us\",\n\t\"password\": \"new secure password\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[HELPER] POST /executeSql (set user token for testing)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// define the body with variables before sending",
+									"let token_body =  \"UPDATE `user` SET `auth_token`='token_placeholder' WHERE `id`={{user_id}};\";",
+									"token_body = token_body.replace('token_placeholder', pm.globals.get(\"auth_token\"));",
+									"pm.variables.set('token_body', token_body);",
+									"// pm.globals.set(\"auth_token\", \"test_token\");",
+									"// pm.globals.set(\"user_id\", 18);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "text/plain",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{token_body}}",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/executeSql",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"executeSql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users.images",
+			"item": [
+				{
+					"name": "GET /users/:id/image (me; no image yet)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /users/:id/image (me)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "image/jpeg",
+								"type": "text"
+							},
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "user_sample.jpg"
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users/:id/image (me)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content Type is correct\", function() {\r",
+									"    pm.response.to.be.header(\"Content-Type\", \"image/jpeg\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /users/:id/image (doesnt exist)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403 or 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([403, 404]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "image/jpeg"
+							},
+							{
+								"key": "X-Authorization",
+								"type": "text",
+								"value": "{{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "user_sample.jpg"
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/999999999/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"999999999",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users/:id/image (doesnt exist)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/99999999/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"99999999",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /users/:id/image (me)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/users/{{user_id}}/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /users/:id/image (me) - No Image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 or 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 404]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/users/NotANumber/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"NotANumber",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /users/:id/image (another user)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403 or 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([403, 404]);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"type": "text",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/users/1/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"image"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "petitions",
+			"item": [
+				{
+					"name": "GET /petitions (no parameters)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valid count and number of petitions\", function() {\r",
+									"    try {\r",
+									"        var data = pm.response.json()\r",
+									"        pm.expect(data.count).to.equal(18)\r",
+									"        pm.expect(data.petitions.length).to.equal(18)\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Incorrect count or number of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"var expectedOrdering = [6,1,2,7,8,4,9,10,3,11,12,5,13,14,15,16,17,18]\r",
+									"\r",
+									"pm.test(\"Valid ordering\", function() {\r",
+									"    try {\r",
+									"        var petitions = pm.response.json().petitions\r",
+									"        // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)\r",
+									"        for (var i = 0; i<expectedOrdering.length; i++){\r",
+									"            if (expectedOrdering[i] !== petitions[i].petitionId){\r",
+									"                pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"                break\r",
+									"            }\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Expected petition data structure\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json().petitions[0]\r",
+									"        pm.expect(data.petitionId).to.be.a(\"number\");\r",
+									"        pm.expect(data.title).to.be.a(\"string\");\r",
+									"        pm.expect(data.categoryId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerFirstName).to.be.a(\"string\");\r",
+									"        pm.expect(data.ownerLastName).to.be.a(\"string\");\r",
+									"    } catch(err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"var expectedData = {\r",
+									"    \"petitionId\": 6,\r",
+									"    \"title\": \"Avonbush Natural Park\",\r",
+									"    \"categoryId\": 1,\r",
+									"    \"ownerId\": 3,\r",
+									"    \"ownerFirstName\": \"Tahani\",\r",
+									"    \"ownerLastName\": \"Al-Jamil\",\r",
+									"    \"creationDate\": \"2022-12-10T22:56:12.000Z\",\r",
+									"    \"supportingCost\": 0\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Valid petition data\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json()\r",
+									"        var petition = data.petitions.filter(p => p.petitionId === expectedData.petitionId)[0]\r",
+									"        for(const [key, value] of Object.entries(expectedData)) {\r",
+									"            pm.expect(petition[key]).to.equal(value)\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        console.log(err)\r",
+									"        pm.expect.fail(\"Incorrect petition data\")\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions (startIndex and count)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valid count and number of petitions\", function() {\r",
+									"    try {\r",
+									"        var data = pm.response.json()\r",
+									"        pm.expect(data.count).to.equal(18)\r",
+									"        pm.expect(data.petitions.length).to.equal(1)\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Incorrect count or number of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Expected petition data structure\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json().petitions[0]\r",
+									"        pm.expect(data.petitionId).to.be.a(\"number\");\r",
+									"        pm.expect(data.title).to.be.a(\"string\");\r",
+									"        pm.expect(data.categoryId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerFirstName).to.be.a(\"string\");\r",
+									"        pm.expect(data.ownerLastName).to.be.a(\"string\");\r",
+									"    } catch(err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions?startIndex=1&count=1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							],
+							"query": [
+								{
+									"key": "startIndex",
+									"value": "1"
+								},
+								{
+									"key": "count",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions (q)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valid count and number of petitions\", function() {\r",
+									"    try {\r",
+									"        var data = pm.response.json()\r",
+									"        pm.expect(data.count).to.equal(4)\r",
+									"        pm.expect(data.petitions.length).to.equal(4)\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Incorrect count or number of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"var expectedOrdering = [1,7,5,17]\r",
+									"\r",
+									"pm.test(\"Valid ordering\", function() {\r",
+									"    try {\r",
+									"        var petitions = pm.response.json().petitions\r",
+									"        // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)\r",
+									"        for (var i = 0; i<expectedOrdering.length; i++){\r",
+									"            if (expectedOrdering[i] !== petitions[i].petitionId){\r",
+									"                pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"                break\r",
+									"            }\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Expected petition data structure\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json().petitions[0]\r",
+									"        pm.expect(data.petitionId).to.be.a(\"number\");\r",
+									"        pm.expect(data.title).to.be.a(\"string\");\r",
+									"        pm.expect(data.categoryId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerFirstName).to.be.a(\"string\");\r",
+									"        pm.expect(data.ownerLastName).to.be.a(\"string\");\r",
+									"    } catch(err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions?q=help",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "help"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions (supportingCost 10)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valid count and number of petitions\", function() {\r",
+									"    try {\r",
+									"        var data = pm.response.json()\r",
+									"        pm.expect(data.count).to.equal(12)\r",
+									"        pm.expect(data.petitions.length).to.equal(12)\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Incorrect count or number of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"var expectedOrdering = [6,1,7,4,9,3,12,5,15,16,17,18]\r",
+									"\r",
+									"pm.test(\"Valid ordering\", function() {\r",
+									"    try {\r",
+									"        var petitions = pm.response.json().petitions\r",
+									"        console.log(`petitions [${petitions.map(p => p.petitionId)}]`)\r",
+									"        for (var i = 0; i<expectedOrdering.length; i++){\r",
+									"            if (expectedOrdering[i] !== petitions[i].petitionId){\r",
+									"                pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"                break\r",
+									"            }\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Expected petition data structure\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json().petitions[0]\r",
+									"        pm.expect(data.petitionId).to.be.a(\"number\");\r",
+									"        pm.expect(data.title).to.be.a(\"string\");\r",
+									"        pm.expect(data.categoryId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerFirstName).to.be.a(\"string\");\r",
+									"        pm.expect(data.ownerLastName).to.be.a(\"string\");\r",
+									"    } catch(err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions?supportingCost=10",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							],
+							"query": [
+								{
+									"key": "supportingCost",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions (supporterId)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valid count and number of petitions\", function() {\r",
+									"    try {\r",
+									"        var data = pm.response.json()\r",
+									"        pm.expect(data.count).to.equal(4)\r",
+									"        pm.expect(data.petitions.length).to.equal(4)\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Incorrect count or number of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"var expectedOrdering = [4,10,5,17]\r",
+									"\r",
+									"pm.test(\"Valid ordering\", function() {\r",
+									"    try {\r",
+									"        var petitions = pm.response.json().petitions\r",
+									"        // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)\r",
+									"        for (var i = 0; i<expectedOrdering.length; i++){\r",
+									"            if (expectedOrdering[i] !== petitions[i].petitionId){\r",
+									"                pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"                break\r",
+									"            }\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Expected petition data structure\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json().petitions[0]\r",
+									"        pm.expect(data.petitionId).to.be.a(\"number\");\r",
+									"        pm.expect(data.title).to.be.a(\"string\");\r",
+									"        pm.expect(data.categoryId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerFirstName).to.be.a(\"string\");\r",
+									"        pm.expect(data.ownerLastName).to.be.a(\"string\");\r",
+									"    } catch(err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions?supporterId=1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							],
+							"query": [
+								{
+									"key": "supporterId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions (multiple categoryIds)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valid count and number of petitions\", function() {\r",
+									"    try {\r",
+									"        var data = pm.response.json()\r",
+									"        pm.expect(data.count).to.equal(4)\r",
+									"        pm.expect(data.petitions.length).to.equal(4)\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Incorrect count or number of films\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Expected petition data structure\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json().petitions[0]\r",
+									"        pm.expect(data.petitionId).to.be.a(\"number\");\r",
+									"        pm.expect(data.title).to.be.a(\"string\");\r",
+									"        pm.expect(data.categoryId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerFirstName).to.be.a(\"string\");\r",
+									"        pm.expect(data.ownerLastName).to.be.a(\"string\");\r",
+									"    } catch(err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"var expectedOrdering = [6,2,3,11]\r",
+									"\r",
+									"pm.test(\"Valid ordering\", function() {\r",
+									"    try {\r",
+									"        var petitions = pm.response.json().petitions\r",
+									"        // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)\r",
+									"        for (var i = 0; i<expectedOrdering.length; i++){\r",
+									"            if (expectedOrdering[i] !== petitions[i].petitionId){\r",
+									"                pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"                break\r",
+									"            }\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions?categoryIds=1&categoryIds=2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							],
+							"query": [
+								{
+									"key": "categoryIds",
+									"value": "1"
+								},
+								{
+									"key": "categoryIds",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions (many params - ownerId)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valid count and number of petitions\", function() {\r",
+									"    try {\r",
+									"        var data = pm.response.json()\r",
+									"        pm.expect(data.count).to.equal(2)\r",
+									"        pm.expect(data.petitions.length).to.equal(1)\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Incorrect count or number of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"var expectedOrdering = [12]\r",
+									"\r",
+									"pm.test(\"Valid ordering\", function() {\r",
+									"    try {\r",
+									"        var petitions = pm.response.json().petitions\r",
+									"        // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)\r",
+									"        for (var i = 0; i<expectedOrdering.length; i++){\r",
+									"            if (expectedOrdering[i] !== petitions[i].petitionId){\r",
+									"                pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"                break\r",
+									"            }\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Expected petition data structure\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json().petitions[0]\r",
+									"        pm.expect(data.petitionId).to.be.a(\"number\");\r",
+									"        pm.expect(data.title).to.be.a(\"string\");\r",
+									"        pm.expect(data.categoryId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerFirstName).to.be.a(\"string\");\r",
+									"        pm.expect(data.ownerLastName).to.be.a(\"string\");\r",
+									"    } catch(err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions?ownerId=16&q=at&supportingCost=10&categoryIds=1&categoryIds=8&startIndex=0&count=1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							],
+							"query": [
+								{
+									"key": "ownerId",
+									"value": "16"
+								},
+								{
+									"key": "q",
+									"value": "at"
+								},
+								{
+									"key": "supportingCost",
+									"value": "10"
+								},
+								{
+									"key": "categoryIds",
+									"value": "1"
+								},
+								{
+									"key": "categoryIds",
+									"value": "8"
+								},
+								{
+									"key": "startIndex",
+									"value": "0"
+								},
+								{
+									"key": "count",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions (sortBy COST_DESC)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valid count and number of petitions\", function() {\r",
+									"    try {\r",
+									"        var data = pm.response.json()\r",
+									"        pm.expect(data.count).to.equal(18)\r",
+									"        pm.expect(data.petitions.length).to.equal(18)\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Incorrect count or number of films\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"var expectedOrdering = [8,14,10,13,2,11,9,12,4,5,7,1,3,6,15,16,17,18]\r",
+									"\r",
+									"pm.test(\"Valid ordering\", function() {\r",
+									"    try {\r",
+									"        var petitions = pm.response.json().petitions\r",
+									"        // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)\r",
+									"        for (var i = 0; i<expectedOrdering.length; i++){\r",
+									"            if (expectedOrdering[i] !== petitions[i].petitionId){\r",
+									"                pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"                break\r",
+									"            }\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Expected petition data structure\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json().petitions[0]\r",
+									"        pm.expect(data.petitionId).to.be.a(\"number\");\r",
+									"        pm.expect(data.title).to.be.a(\"string\");\r",
+									"        pm.expect(data.categoryId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerId).to.be.a(\"number\");\r",
+									"        pm.expect(data.ownerFirstName).to.be.a(\"string\");\r",
+									"        pm.expect(data.ownerLastName).to.be.a(\"string\");\r",
+									"    } catch(err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions?sortBy=COST_DESC",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "COST_DESC"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions (empty q)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions?q=",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions (invalid sortBy)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions?sortBy=not_a_sort_option",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "not_a_sort_option"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions (invalid supporterId)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions?supporterId=abc",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							],
+							"query": [
+								{
+									"key": "supporterId",
+									"value": "abc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions/id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// todo: check return value"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions/id (Not Found)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/9999",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"9999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions/categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"returns an array of the correct size\", function () {\r",
+									"    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+									"    pm.expect(pm.response.json().length).to.equal(12);\r",
+									"})\r",
+									"\r",
+									"// todo: validate response data"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/categories",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petition (empty title)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"\",\r\n    \"description\": \"My new petition description\",\r\n    \"categoryId\": 1,\r\n    \"supportTiers\": [\r\n        {\r\n            \"title\": \"Free tier\",\r\n            \"description\": \"Its free\",\r\n            \"cost\": 0\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petition (No supportTiers)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My new petition\",\r\n    \"description\": \"My new petition description\",\r\n    \"categoryId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petition (invalid supportTiers - too many tiers)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My new petition\",\r\n    \"description\": \"My new petition description\",\r\n    \"categoryId\": 1,\r\n    \"supportTiers\": [\r\n        {\r\n            \"title\": \"tier 1\",\r\n            \"description\": \"first tier\",\r\n            \"cost\": 0\r\n        },\r\n        {\r\n            \"title\": \"tier 2\",\r\n            \"description\": \"second tier\",\r\n            \"cost\": 10\r\n        },\r\n        {\r\n            \"title\": \"tier 3\",\r\n            \"description\": \"third tier\",\r\n            \"cost\": 20\r\n        },\r\n        {\r\n            \"title\": \"tier 4\",\r\n            \"description\": \"fourth tier\",\r\n            \"cost\": 30\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petition (invalid supportTiers - no cost)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My new petition\",\r\n    \"description\": \"My new petition description\",\r\n    \"categoryId\": 1,\r\n    \"supportTiers\": [\r\n        {\r\n            \"title\": \"Free tier\",\r\n            \"description\": \"Its free\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petition (Not authorized)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My new petition\",\r\n    \"description\": \"My new petition description\",\r\n    \"categoryId\": 1,\r\n    \"supportTiers\": [\r\n        {\r\n            \"title\": \"Free tier\",\r\n            \"description\": \"Its free\",\r\n            \"cost\": 0\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petition",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"petitionId is returned\", function () {\r",
+									"    pm.expect(pm.response.json().petitionId).to.be.a(\"number\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Set post_petition_id after creation\", function() {\r",
+									"    const petitionId = pm.response.json().petitionId;\r",
+									"    if (typeof petitionId !== \"undefined\") {\r",
+									"        pm.globals.set(\"post_petition_id\", petitionId);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My new petition\",\r\n    \"description\": \"My new petition description\",\r\n    \"categoryId\": 1,\r\n    \"supportTiers\": [\r\n        {\r\n            \"title\": \"Free tier\",\r\n            \"description\": \"Its free\",\r\n            \"cost\": 0\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petition (many supportTiers)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"petitionId is returned\", function () {\r",
+									"    pm.expect(pm.response.json().petitionId).to.be.a(\"number\")\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My newer petition\",\r\n    \"description\": \"My newer petition description\",\r\n    \"categoryId\": 1,\r\n    \"supportTiers\": [\r\n        {\r\n            \"title\": \"Free tier\",\r\n            \"description\": \"Its free\",\r\n            \"cost\": 0\r\n        },\r\n        {\r\n            \"title\": \"Low tier\",\r\n            \"description\": \"Its not free\",\r\n            \"cost\": 15\r\n        },\r\n        {\r\n            \"title\": \"High tier\",\r\n            \"description\": \"Its really not free\",\r\n            \"cost\": 250\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petition (Forbidden - someone else's)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 or 403\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([404, 403]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My updated petition\",\r\n    \"description\": \"My updated petition description\",\r\n    \"categoryId\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petition (title too long)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"i3EC3LhN2TbzaLxLRjedaC9rb4V7cR5rGtuDgVpMStvvRPvFGrENQXkndgX22JbfrkVaq5Mv2TGKPLyLbWKywbrBJ1hGVMSbrR21DFATkzcea6zLkapcyhuL4vK9fwF0N\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petition (empty description)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petition (invalid categoryId - string)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"categoryId\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petition (NaN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 or 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 404]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My updated petition\",\r\n    \"description\": \"My updated petition description\",\r\n    \"categoryId\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/not_an_id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"not_an_id"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petition (title only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"title\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[VALIDATE] GET /petition/id (validate patch)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"expected values have been set\", function() {\r",
+									"    try {\r",
+									"        pm.expect(pm.response.json().petitionId).to.equal(pm.globals.get(\"post_petition_id\"));\r",
+									"        pm.expect(pm.response.json().title).to.equal(\"title\");\r",
+									"    } catch (err) {\r",
+									"        console.log(err);\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petition (all)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My updated petition\",\r\n    \"description\": \"My updated petition description\",\r\n    \"categoryId\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[VALIDATE] GET /petition/id (validate patch)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"expected values have been set\", function() {\r",
+									"    try {\r",
+									"        pm.expect(pm.response.json().petitionId).to.equal(pm.globals.get(\"post_petition_id\"));\r",
+									"        pm.expect(pm.response.json().title).to.equal(\"My updated petition\");\r",
+									"        pm.expect(pm.response.json().description).to.equal(\"My updated petition description\");\r",
+									"        pm.expect(pm.response.json().categoryId).to.equal(3);\r",
+									"    } catch (err) {\r",
+									"        console.log(err);\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /petition (Not Found)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 or 403\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([404, 403]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/9999",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"9999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[HELPER] Add petition with supporter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (created) or 500 (already exists?)\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 500]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "INSERT INTO `petition` (`id`, `title`, `description`, `creation_date`, `image_filename`, `owner_id`, `category_id`) VALUES (12345, 'example petition', 'example description', '2023-10-18 10:10:00', 'petition_3.jpg', {{user_id}}, 2);\r\nINSERT INTO `support_tier` (`id`, `petition_id`, `title`, `description`, `cost`) VALUES (12345, 12345, 'Join the newsletter', 'Sign-up to receive the monthly newsletter', 0);\r\nINSERT INTO `supporter` (`petition_id`, `support_tier_id`, `user_id`, `message`, `timestamp`) VALUES (12345, 12345, 1, 'Interesting stuff', '2023-11-07 06:59:58');\r\n",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/executeSql",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"executeSql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /petition (Forbidden - supporter exists)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/12345",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"12345"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /petition",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "petitions.supportTiers",
+			"item": [
+				{
+					"name": "[HELPER] POST /petition",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"petitionId is returned\", function () {\r",
+									"    pm.expect(pm.response.json().petitionId).to.be.a(\"number\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Set post_petition_id after creation\", function() {\r",
+									"    const petitionId = pm.response.json().petitionId;\r",
+									"    if (typeof petitionId !== \"undefined\") {\r",
+									"        pm.globals.set(\"post_petition_id\", petitionId);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My newest petition\",\r\n    \"description\": \"My new petition description\",\r\n    \"categoryId\": 1,\r\n    \"supportTiers\": [\r\n        {\r\n            \"title\": \"Free tier\",\r\n            \"description\": \"Its free\",\r\n            \"cost\": 0\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[HELPER] GET /petition/id (get supportTierId)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Set post_petition_support_tier_id after creation\", function() {\r",
+									"    try {\r",
+									"        const petitionSupportTierId = pm.response.json().supportTiers[0].supportTierId;\r",
+									"        if (typeof petitionSupportTierId !== \"undefined\") {\r",
+									"            pm.globals.set(\"post_petition_support_tier_id\", petitionSupportTierId);\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /petitions/id/supportTiers (NaN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400, 403 or 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 403, 404]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"tier 1\",\r\n    \"description\": \"first tier\",\r\n    \"cost\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/not_an_id/supportTiers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"not_an_id",
+								"supportTiers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /petitions/id/supportTiers (Not Found)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 (403 also accepted)\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([403, 404]);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"tier 1\",\r\n    \"description\": \"first tier\",\r\n    \"cost\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/9999/supportTiers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"9999",
+								"supportTiers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /petitions/id/supportTiers (no title)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\": \"A new tier\",\r\n    \"cost\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"supportTiers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /petitions/id/supportTiers (cost negative)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"tier 1\",\r\n    \"description\": \"first tier\",\r\n    \"cost\": -10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"supportTiers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /petitions/id/supportTiers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"tier 1\",\r\n    \"description\": \"first tier\",\r\n    \"cost\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"supportTiers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[HELPER] POST /petition (many supportTiers)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"petitionId is returned\", function () {\r",
+									"    pm.expect(pm.response.json().petitionId).to.be.a(\"number\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Set post_petition_3_support_tiers_id after creation\", function() {\r",
+									"    const petitionId = pm.response.json().petitionId;\r",
+									"    if (typeof petitionId !== \"undefined\") {\r",
+									"        pm.globals.set(\"post_petition_3_support_tiers_id\", petitionId);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My newerer petition\",\r\n    \"description\": \"My newer petition description\",\r\n    \"categoryId\": 1,\r\n    \"supportTiers\": [\r\n        {\r\n            \"title\": \"Free tier\",\r\n            \"description\": \"Its free\",\r\n            \"cost\": 0\r\n        },\r\n        {\r\n            \"title\": \"Low tier\",\r\n            \"description\": \"Its not free\",\r\n            \"cost\": 15\r\n        },\r\n        {\r\n            \"title\": \"High tier\",\r\n            \"description\": \"Its really not free\",\r\n            \"cost\": 250\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /petitions/id/supportTiers (invalid - 3 tiers exist)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"tier 1\",\r\n    \"description\": \"first tier\",\r\n    \"cost\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_3_support_tiers_id}}/supportTiers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_3_support_tiers_id}}",
+								"supportTiers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petitions/id/supportTiers/id (Forbidden - Someone else's)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 or 403\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([404, 403]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"updated\",\r\n    \"description\": \"updated\",\r\n    \"cost\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/1/supportTiers/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"1",
+								"supportTiers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petitions/id/supportTiers/id (invalid - title too long)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"i3EC3LhN2TbzaLxLRjedaC9rb4V7cR5rGtuDgVpMStvvRPvFGrENQXkndgX22JbfrkVaq5Mv2TGKPLyLbWKywbrBJ1hGVMSbrR21DFATkzcea6zLkapcyhuL4vK9fwF0N\",\r\n    \"description\": \"updated\",\r\n    \"cost\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/{{post_petition_support_tier_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"supportTiers",
+								"{{post_petition_support_tier_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petitions/id/supportTiers/id (invalid - cost string)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"updated\",\r\n    \"description\": \"updated\",\r\n    \"cost\": \"0\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/{{post_petition_support_tier_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"supportTiers",
+								"{{post_petition_support_tier_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petitions/id/supportTiers/id (cost only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cost\": 99\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/{{post_petition_support_tier_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"supportTiers",
+								"{{post_petition_support_tier_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[VALIDATE] GET /petition/id (validate patches)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"expected values have been set\", function () {\r",
+									"    try {\r",
+									"        let supportTier = pm.response.json().supportTiers.find(e => e.supportTierId == pm.globals.get(\"post_petition_support_tier_id\"))\r",
+									"        pm.expect(supportTier.title).to.equal(\"Free tier\");\r",
+									"        pm.expect(supportTier.description).to.equal(\"Its free\");\r",
+									"        pm.expect(supportTier.cost).to.equal(99);\r",
+									"    } catch (err) {\r",
+									"        console.log(err);\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petitions/id/supportTiers/id (all)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"updated\",\r\n    \"description\": \"updated\",\r\n    \"cost\": 150\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/{{post_petition_support_tier_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"supportTiers",
+								"{{post_petition_support_tier_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[VALIDATE] GET /petition/id (validate patch)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"expected values have been set\", function() {\r",
+									"    try {\r",
+									"        let supportTier = pm.response.json().supportTiers.find(e => e.supportTierId == pm.globals.get(\"post_petition_support_tier_id\"))\r",
+									"        pm.expect(supportTier.title).to.equal(\"updated\");\r",
+									"        pm.expect(supportTier.description).to.equal(\"updated\");\r",
+									"        pm.expect(supportTier.cost).to.equal(150);\r",
+									"    } catch (err) {\r",
+									"        console.log(err);\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[HELPER] Add petition with supporter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (created) or 500 (already exists?)\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 500]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "INSERT INTO `petition` (`id`, `title`, `description`, `creation_date`, `image_filename`, `owner_id`, `category_id`) VALUES (123456, 'example petition 2', 'example description', '2023-10-18 10:10:00', 'petition_3.jpg', {{user_id}}, 2);\r\nINSERT INTO `support_tier` (`id`, `petition_id`, `title`, `description`, `cost`) VALUES (123456, 123456, 'example tier', 'example tier', 0);\r\nINSERT INTO `support_tier` (`id`, `petition_id`, `title`, `description`, `cost`) VALUES (123457, 123456, 'example tier 2', 'example tier 2', 0);\r\nINSERT INTO `supporter` (`petition_id`, `support_tier_id`, `user_id`, `message`, `timestamp`) VALUES (123456, 123456, 1, 'Interesting stuff', '2023-11-07 06:59:58');\r\n",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/executeSql",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"executeSql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /petitions/id/supportTiers/id (invalid - supporter exists)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"updated\",\r\n    \"description\": \"updated\",\r\n    \"cost\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/123456/supportTiers/123456",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"123456",
+								"supportTiers",
+								"123456"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /petitions/id/supportTiers/id (NaN petitionId)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400, 403 or 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 403, 404]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"updated\",\r\n    \"description\": \"updated\",\r\n    \"cost\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/not_a_number/supportTiers/{{post_petition_support_tier_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"not_a_number",
+								"supportTiers",
+								"{{post_petition_support_tier_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /petitions/id/supportTiers/id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"updated\",\r\n    \"description\": \"updated\",\r\n    \"cost\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/123456/supportTiers/123457",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"123456",
+								"supportTiers",
+								"123457"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /petitions/id/supportTiers/id (invalid - supportTier does not exist)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"updated\",\r\n    \"description\": \"updated\",\r\n    \"cost\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/9999",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"supportTiers",
+								"9999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /petitions/id/supportTiers/id (Unauthorized)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"updated\",\r\n    \"description\": \"updated\",\r\n    \"cost\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/{{post_petition_support_tier_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"supportTiers",
+								"{{post_petition_support_tier_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "petitions.supporters",
+			"item": [
+				{
+					"name": "GET /petitions/id/supporters",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"returns an array of the correct size\", function () {\r",
+									"    try {\r",
+									"        const data = pm.response.json() \r",
+									"        pm.expect(data).to.be.an(\"array\");\r",
+									"        pm.expect(data.length).to.equal(3);\r",
+									"    } catch (err) {\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"var expectedOrdering = [3, 2, 1]\r",
+									"\r",
+									"pm.test(\"Valid ordering\", function() {\r",
+									"    try {\r",
+									"        var supporters = pm.response.json()\r",
+									"        // console.log(`supporters [${supporters.map(s => s.supportTier)}]`)\r",
+									"        for (var i = 0; i<expectedOrdering.length; i++){\r",
+									"            if (expectedOrdering[i] !== supporters[i].supportId){\r",
+									"                pm.expect.fail(\"Invalid ordering of supporters\")\r",
+									"                break\r",
+									"            }\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        console.log(err)\r",
+									"        pm.expect.fail(\"Invalid ordering of petitions\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Expected supporter data structure\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json()[pm.response.json().length-1]\r",
+									"        pm.expect(data.supportId).to.be.a(\"number\");\r",
+									"        pm.expect(data.supportTierId).to.be.a(\"number\");\r",
+									"        pm.expect(data.message).to.be.a(\"string\");\r",
+									"        pm.expect(data.supporterId).to.be.a(\"number\");\r",
+									"        pm.expect(data.supporterFirstName).to.be.a(\"string\");\r",
+									"        pm.expect(data.supporterLastName).to.be.a(\"string\");\r",
+									"        pm.expect(data.timestamp).to.be.a(\"string\");\r",
+									"    } catch(err) {\r",
+									"        console.log(err)\r",
+									"        pm.expect.fail(\"INVALID RESPONSE\")\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									"var expectedData =     {\r",
+									"        \"supportId\": 1,\r",
+									"        \"supportTierId\": 1,\r",
+									"        \"message\": \"Love the cause\",\r",
+									"        \"supporterId\": 2,\r",
+									"        \"supporterFirstName\": \"Chidi\",\r",
+									"        \"supporterLastName\": \"Anagonye\",\r",
+									"        \"timestamp\": \"2023-03-19T23:15:18.000Z\"\r",
+									"    }\r",
+									"\r",
+									"pm.test(\"Valid supporter data\", function() {\r",
+									"    try{\r",
+									"        var data = pm.response.json()\r",
+									"        var supporter = data[data.length-1]\r",
+									"        for(const [key, value] of Object.entries(expectedData)) {\r",
+									"            pm.expect(supporter[key]).to.equal(value)\r",
+									"        }\r",
+									"    } catch (err) {\r",
+									"        console.log(err)\r",
+									"        pm.expect.fail(\"Incorrect petition data\")\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/1/supporters",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"1",
+								"supporters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petitions/id/supporters (NaN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400, 403 or 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 403, 404]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"supportTierId\": 1,\r\n    \"message\": \"example message\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/not_an_id/supporters",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"not_an_id",
+								"supporters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petitions/id/supporters (Forbidden - Own petition)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"supportTierId\": {{post_petition_support_tier_id}},\r\n    \"message\": \"example message\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/supporters",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"supporters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petitions/id/supporters (Not Found)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"supportTierId\": {{post_petition_support_tier_id}},\r\n    \"message\": \"example message\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/9999/supporters",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"9999",
+								"supporters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petitions/id/supporters (invalid - supportTierId string)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"supportTierId\": \"1\",\r\n    \"message\": \"example message\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/1/supporters",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"1",
+								"supporters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petitions/id/supporters (invalid - supportTierId not included)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"message\": \"example message\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/1/supporters",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"1",
+								"supporters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petitions/id/supporters",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"supportTierId\": 1,\r\n    \"message\": \"example message\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/1/supporters",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"1",
+								"supporters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /petitions/id/supporters (support same petition at a different tier and no message)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"supportTierId\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/1/supporters",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"1",
+								"supporters"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "petitions.images",
+			"item": [
+				{
+					"name": "GET /petitions/:id/image (png)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content Type is correct\", function() {\r",
+									"    pm.response.to.be.header(\"Content-Type\", \"image/png\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/1/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"1",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions/:id/image (No image)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /petitions/:id/image (jpeg)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "image/jpeg",
+								"type": "text"
+							},
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "sample.jpg"
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions/:id/image (jpeg)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content Type is correct\", function() {\r",
+									"    pm.response.to.be.header(\"Content-Type\", \"image/jpeg\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /petitions/:id/image (gif)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "image/gif",
+								"type": "text"
+							},
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "sample.gif"
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /petitions/:id/image (gif)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content Type is correct\", function() {\r",
+									"    pm.response.to.be.header(\"Content-Type\", \"image/gif\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /petitions/:id/image (invalid - bmp)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "image/bmp",
+								"type": "text"
+							},
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "sample.BMP"
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/petitions/{{post_petition_id}}/image",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"petitions",
+								"{{post_petition_id}}",
+								"image"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
