@@ -13,7 +13,7 @@ async function main() {
             Logger.info('Listening on port: ' + port)
         });
     } catch (err) {
-        Logger.error('Unable to connect to MySQL.')
+        Logger.error(`Unable to connect to MySQL. ${err}`)
         process.exit(1);
     }
 }
