@@ -2,7 +2,7 @@ type User = {
     /**
      * User id as defined by the database
      */
-    user_id: number,
+    id: number,
     /**
      * User email as entered when created
      */

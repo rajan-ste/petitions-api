@@ -4,7 +4,7 @@ import {validate, isValidEmail} from '../utils/validate'
 import {hash} from '../services/passwords'
 import * as schemas from '../resources/schemas.json'
 import * as users from '../models/user.model'
-
+import * as passwords from '../services/passwords'
 
 const register = async (req: Request, res: Response): Promise<void> => {
     Logger.http(`POST create a user with email ${req.body.email}`);
@@ -38,12 +38,45 @@ const register = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns void
+ */
 const login = async (req: Request, res: Response): Promise<void> => {
+    Logger.http(`POST login user with email ${req.body.email}`)
+    const email = req.body.email;
+    const emailExists = await users.emailExists(email);
+    if (!emailExists) {
+        res.status(401).send(`User with ${email} does not exist`);
+        return;
+    }
+
+   const comp = req.body.password;
+   if (!comp) {
+        res.status(400).send('Bad Request. Invalid information');
+        return;
+   }
+
+   const rows = await users.getPass(email);
+   if (rows.length === 0) {
+        res.status(401).send('UnAuthorized. Incorrect email/password')
+        return;
+   }
+   const hashedPass = rows[0].password;
+
+   const match = await passwords.compare(hashedPass, comp)
+
+   if (!match) {
+        res.status(401).send(`UnAuthorized. Incorrect email/password`);
+        return;
+   }
+
+   const token = await passwords.genToken();
     try{
-        // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
+        const updatedId = await users.authUser(email, token)
+        res.status(200).send( { "userId": updatedId, "token": token } )
         return;
     } catch (err) {
         Logger.error(err);
