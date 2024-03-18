@@ -15,7 +15,7 @@ const insert = async (email: string, firstName: string, lastName: string, passwo
 const getOne = async (id: number): Promise<User[]> => {
     Logger.info(`Getting user ${id} from the database`)
     const conn = await getPool().getConnection();
-    const query = 'select first_name, last_name, email from `user` where id = ?';
+    const query = 'select * from `user` where id = ?';
     const [ rows ] = await conn.query( query, [ id ]);
     await conn.release();
     return rows;
@@ -40,6 +40,7 @@ const getPass = async (email: string): Promise<User[]> => {
 }
 
 const authUser = async (email: string, token: string): Promise<number> => {
+    Logger.info(`Authenticating user with email: ${email}`)
     const conn = await getPool().getConnection();
     const selectQuery = 'SELECT id FROM `user` WHERE email = ?';
     const [users] = await conn.query(selectQuery, [email]);
@@ -53,4 +54,25 @@ const authUser = async (email: string, token: string): Promise<number> => {
     return userId;
 };
 
-export { insert, getOne, emailExists, getPass, authUser }
+/**
+ * return true if user was logged out else false
+ */
+const logOut = async (token: string): Promise<boolean> => {
+    Logger.info(`Logging out user`)
+    const conn = await getPool().getConnection();
+    const query = 'select id from `user` where auth_token = ?';
+    const [ users ] = await conn.query(query, [ token ]);
+
+    if (users.length === 0) {
+        await conn.release();
+        return false;
+    }
+
+    const userId = users[0].id;
+    const logoutQuery = 'update user set auth_token = NULL where id = ?';
+    await conn.query(logoutQuery, [ userId ]);
+    await conn.release();
+    return true;
+}
+
+export { insert, getOne, emailExists, getPass, authUser, logOut }
