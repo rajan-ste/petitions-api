@@ -63,6 +63,7 @@ const logOut = async (token: string): Promise<boolean> => {
     const query = 'select id from `user` where auth_token = ?';
     const [ users ] = await conn.query(query, [ token ]);
 
+    // if no user was found for given auth_token
     if (users.length === 0) {
         await conn.release();
         return false;
@@ -75,4 +76,33 @@ const logOut = async (token: string): Promise<boolean> => {
     return true;
 }
 
-export { insert, getOne, emailExists, getPass, authUser, logOut }
+const updateUser = async (newData: Partial<User>, id: number): Promise<ResultSetHeader> => {
+    Logger.info(`Updating users info`)
+    let query = 'UPDATE `user` SET ';
+    const values = [];
+    const toUpdate = [];
+
+    // Dynamically build the set part of the query based on newData fields
+    for (const [key, value] of Object.entries(newData)) {
+        toUpdate.push(`${key} = ?`);
+        values.push(value);
+    }
+    query += toUpdate.join(', ') + ' WHERE id = ?';
+    values.push(id);
+
+    const conn = await getPool().getConnection();
+    const [ result ] = await conn.query(query, values);
+    await conn.release();
+    return result;
+}
+
+const getUserWithToken = async (token: string): Promise<User[]> => {
+    Logger.info(`Getting user with token from the database`)
+    const conn = await getPool().getConnection();
+    const query = 'select * from `user` where auth_token = ?';
+    const [ rows ] = await conn.query( query, [ token ]);
+    await conn.release();
+    return rows;
+}
+
+export { insert, getOne, emailExists, getPass, authUser, logOut, updateUser, getUserWithToken }
