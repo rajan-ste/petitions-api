@@ -70,7 +70,7 @@ const logOut = async (token: string): Promise<boolean> => {
     }
 
     const userId = users[0].id;
-    const logoutQuery = 'update user set auth_token = NULL where id = ?';
+    const logoutQuery = 'update `user` set auth_token = NULL where id = ?';
     await conn.query(logoutQuery, [ userId ]);
     await conn.release();
     return true;
@@ -96,13 +96,18 @@ const updateUser = async (newData: Partial<User>, id: number): Promise<ResultSet
     return result;
 }
 
-const getUserWithToken = async (token: string): Promise<User[]> => {
-    Logger.info(`Getting user with token from the database`)
+/**
+ * @async
+ * @param id id of user to check
+ * @returns true if user exists
+ */
+const userExists = async (id: number): Promise<boolean> => {
+    Logger.info(`Validating user ${id}`)
     const conn = await getPool().getConnection();
-    const query = 'select * from `user` where auth_token = ?';
-    const [ rows ] = await conn.query( query, [ token ]);
+    const query = 'select count(*) as count from user where id = ?';
+    const [ rows ] = await conn.query( query, [ id ]);
     await conn.release();
-    return rows;
+    return rows[0].count > 0;
 }
 
-export { insert, getOne, emailExists, getPass, authUser, logOut, updateUser, getUserWithToken }
+export { insert, getOne, emailExists, getPass, authUser, logOut, updateUser, userExists }

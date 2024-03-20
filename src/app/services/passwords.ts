@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import Logger from '../../config/logger';
+import { getOne } from '../models/user.model';
 
 /**
  * Hash a password
@@ -52,4 +53,36 @@ const genToken = async (): Promise<string> => {
     }
 };
 
-export {hash, compare, genToken}
+/**
+ * Validate an incoming auth token
+ * @param id user id
+ * @param tokenToValidate the token to validate
+ * @returns {Promise<boolean>} true if token is valid
+ */
+const validateToken = async (id: number, tokenToValidate: string): Promise<boolean> => {
+    try {
+        const result = await getOne(id);
+        const user = result[0];
+        return user.auth_token === tokenToValidate;
+    } catch (err) {
+        throw err;
+    }
+}
+
+/**
+ * Generate a filename for an image
+ * @async
+ * @function genFileName
+ * @return {Promise<string>} The filename
+ */
+const genFileName = async (): Promise<string> => {
+    try {
+        const buffer = crypto.randomBytes(16);
+        return buffer.toString('hex');
+    } catch (err) {
+        Logger.error('Error generating filename:', err);
+        throw new Error('Failed to generate filename');
+    }
+};
+
+export { hash, compare, genToken, validateToken, genFileName }
