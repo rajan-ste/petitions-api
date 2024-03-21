@@ -19,4 +19,26 @@ function isValidEmail(email: string): boolean {
     return regex.test(email);
 }
 
-export {validate, isValidEmail}
+const validGetAllPetitionsParams = (startIndex: string, count: string, supportingCost: string,
+                                    ownerId: string, supporterId: string): boolean => {
+  let validParams = true;
+
+  if (startIndex && isNaN(parseInt(startIndex, 10))) {
+      validParams = false;
+  }
+  if (count && isNaN(parseInt(count, 10))) {
+      validParams = false;
+  }
+  if (supportingCost && isNaN(parseInt(supportingCost, 10))) {
+      validParams = false;
+  }
+  if (ownerId && isNaN(parseInt(ownerId, 10))) {
+      validParams = false;
+  }
+  if (supporterId && isNaN(parseInt(supporterId, 10))) {
+      validParams = false;
+  }
+
+  return validParams;
+}
+export {validate, isValidEmail, validGetAllPetitionsParams}
