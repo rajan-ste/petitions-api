@@ -110,4 +110,13 @@ const userExists = async (id: number): Promise<boolean> => {
     return rows[0].count > 0;
 }
 
-export { insert, getOne, emailExists, getPass, authUser, logOut, updateUser, userExists }
+const getIdFromToken = async (token: string): Promise<number> => {
+    Logger.info(`getting id for token`)
+    const conn = await getPool().getConnection();
+    const query = 'select id from user where auth_token = ?';
+    const [ rows ] = await conn.query( query, [ token ]);
+    await conn.release();
+    return rows[0].id
+}
+
+export { insert, getOne, emailExists, getPass, authUser, logOut, updateUser, userExists, getIdFromToken }
