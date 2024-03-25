@@ -129,6 +129,7 @@ const getPetition = async (req: Request, res: Response): Promise<void> => {
                 title: tier.title,
                 description: tier.description,
                 cost: tier.cost,
+                supportTierId: tier.supportTierId
             }))
         };
         res.status(200).send(petitionRes);

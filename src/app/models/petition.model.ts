@@ -72,7 +72,7 @@ const getOne = async(id: number): Promise<{petition: getOnePetition[]; tiers: su
                   WHERE p.id = ?
                   GROUP BY p.id, p.title, p.category_id, p.owner_id, u.first_name, u.last_name, p.creation_date, p.description  `;
 
-  const supportTierQuery = ` SELECT title, description, cost, id
+  const supportTierQuery = ` SELECT title, description, cost, id as supportTierId
                              FROM support_tier
                              WHERE petition_id = ? `;
 

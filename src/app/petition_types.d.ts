@@ -37,7 +37,7 @@ type supportTier = {
     title: string,
     description: string,
     cost: number,
-    id: number
+    supportTierId: number
 }
 
 type category = {
