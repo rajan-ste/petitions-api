@@ -25,17 +25,52 @@ const getAllPetitions = async (req: Request, res: Response): Promise<void> => {
         return;
     }
 
+    const catIds: number[] = []
     const startIndex = parseInt(req.query.startIndex as string, 10)
     const count = parseInt(req.query.count as string, 10);
     const q = req.query.q as string;
-    const categoryIds = req.query.categoryIds ? (req.query.categoryIds as string[]).map(id => parseInt(id, 10)) : null;
+    // const categoryIds = req.query.categoryIds ? (req.query.categoryIds as string[]).map(id => parseInt(id, 10)) : null;
     const supportingCost = parseInt(req.query.supportingCost as string, 10);
     const ownerId = parseInt(req.query.ownerId as string, 10);
     const supporterId = parseInt(req.query.supporterId as string, 10);
     const sortBy = req.query.sortBy as string;
 
+
+
     try {
-        const petitionsArray = await petitions.getAll(  q, categoryIds, supportingCost,
+        // category ID validation
+        const categoryIds = req.query.categoryIds as string[]
+        if (categoryIds) {
+            if (typeof(categoryIds) === 'string') {
+                const catId = parseInt(categoryIds, 10);
+                if (isNaN(catId)) {
+                    res.status(400).send('Bad Request');
+                    return;
+                }
+                const exists = await petitions.catIdExists(catId);
+                if (!exists) {
+                    res.status(400).send('Bad Request');
+                    return;
+                }
+                // if category exists we can add it to catIds
+                catIds.push(catId);
+            } else {
+                for (const id of categoryIds) {
+                    const catId = parseInt(id, 10);
+                    if (isNaN(catId)) {
+                        res.status(400).send('Bad Request');
+                        return;
+                    }
+                    const exists = await petitions.catIdExists(catId);
+                    if (!exists) {
+                        res.status(400).send('Bad Request');
+                        return;
+                    }
+                    catIds.push(catId);
+                }
+            }
+        }
+        const petitionsArray = await petitions.getAll(  q, catIds, supportingCost,
                                                         ownerId, supporterId, sortBy  );
         const totalCount = petitionsArray.length;
         const petArraySliced = count ? petitionsArray.slice(startIndex, startIndex + count) : petitionsArray.slice(startIndex);
@@ -125,7 +160,6 @@ const addPetition = async (req: Request, res: Response): Promise<void> => {
             res.status(401).send('Unauthorized');
             return;
         }
-        Logger.info(`ownerid: ${ownerId}`)
 
         const title = req.body.title;
         const titleExists = await petitions.titleExists(title);
@@ -134,7 +168,7 @@ const addPetition = async (req: Request, res: Response): Promise<void> => {
         }
 
         const categoryId = req.body.categoryId;
-        const catIdExists = petitions.catIdExists(categoryId);
+        const catIdExists = await petitions.catIdExists(categoryId);
         if (!catIdExists) {
             res.status(400).send(`Bad Request. Invalid information`);
             return;
@@ -170,11 +204,68 @@ const addPetition = async (req: Request, res: Response): Promise<void> => {
 }
 
 const editPetition = async (req: Request, res: Response): Promise<void> => {
-    try{
-        // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
+
+    const validation = await validate(schemas.petition_patch, req.body);
+    if (validation !== true) {
+        res.statusMessage = `Bad Request. Invalid information`;
+        res.status(400).send();
         return;
+    }
+
+    const token = req.headers['x-authorization'] as string;
+    if (!token) {
+        res.status(401).send('Unauthorized');
+        return;
+    }
+
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+        res.status(404).send("Not Found. No petition found with id");
+        return;
+    }
+
+    try {
+        // check exists
+        const exists = await petitions.petitionExists(id);
+        if (!exists) {
+            res.status(404).send("Not Found. No petition found with id");
+            return;
+        }
+
+        const onePetition = await petitions.getOne(id);
+        const ownerId = onePetition.petition[0].owner_id;
+        const validToken = await validateToken(ownerId, token)
+        if (!validToken) {
+            res.status(403).send("Only the owner of a petition may change it");
+            return;
+        }
+
+        const title = req.body.title;
+        if (title) {
+            const titleExistsBool = await petitions.titleExists(title);
+            if (titleExistsBool) {
+                res.status(403).send("Petition title already exists");
+            }
+        }
+
+        const categoryId = req.body.categoryId;
+        if (categoryId) {
+            const catIdExists = await petitions.catIdExists(categoryId);
+            if (!catIdExists) {
+                res.status(400).send(`Bad Request. Invalid information`);
+                return;
+            }
+        }
+
+
+        const newData = {
+            ...(req.body.title && { title: req.body.title }),
+            ...(req.body.description && { description: req.body.description }),
+            ...(req.body.categoryId && { category_id: req.body.categoryId })
+        };
+        const result = await petitions.updateOne(newData, id);
+        res.status(200).send('OK')
+
     } catch (err) {
         Logger.error(err);
         res.statusMessage = "Internal Server Error";
@@ -219,7 +310,7 @@ const deletePetition = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        res.status(200).send();
+        res.status(200).send('OK');
         return;
     } catch (err) {
         Logger.error(err);

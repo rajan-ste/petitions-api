@@ -22,7 +22,7 @@ const getAll = async (  q: string, categoryIds: number[], supportingCost: number
       queryParams.push(`%${q}%`, `%${q}%`);
     }
 
-    if (categoryIds) {
+    if (categoryIds.length > 0) {
       const placeHolders = categoryIds.map(() => '?').join(', ');
       query += ` AND p.category_id IN (${placeHolders})`;
       categoryIds.forEach((id) => queryParams.push(id));
@@ -159,4 +159,32 @@ const deleteOne = async (id: number): Promise<boolean> => {
   return true;
 }
 
-export { getAll, getOne, addOne, petitionExists, titleExists, catIdExists, getCategories, deleteOne }
+const updateOne = async (newData: Partial<Petition>, id: number): Promise<ResultSetHeader> => {
+  Logger.info(`Updating petition info`)
+  let query = 'UPDATE petition SET ';
+  const values = [];
+  const toUpdate = [];
+
+  // Dynamically build the set part of the query based on newData fields
+  if (newData.title) {
+    toUpdate.push(`title = ?`);
+    values.push(newData.title);
+  }
+  if (newData.description) {
+    toUpdate.push(`description = ?`);
+    values.push(newData.description);
+  }
+  if (newData.category_id) {
+    toUpdate.push(`category_id = ?`);
+    values.push(newData.category_id);
+  }
+  query += toUpdate.join(', ') + ' WHERE id = ?';
+  values.push(id);
+
+  const conn = await getPool().getConnection();
+  const [ result ] = await conn.query(query, values);
+  await conn.release();
+  return result;
+}
+
+export { getAll, getOne, addOne, petitionExists, titleExists, catIdExists, getCategories, deleteOne, updateOne }
