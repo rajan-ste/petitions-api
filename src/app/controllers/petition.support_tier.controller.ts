@@ -4,8 +4,8 @@ import * as supportTiers from '../models/petition.support_tier.model';
 import * as schemas from '../resources/schemas.json'
 import { getIdFromToken } from '../models/user.model'
 import { validateToken } from "../services/passwords";
-import { validate } from '../utils/validate'
-import { getOne, petitionExists } from '../models/petition.model'
+import { validate } from '../utils/validate';
+import { getOne, petitionExists } from '../models/petition.model';
 
 
 const addSupportTier = async (req: Request, res: Response): Promise<void> => {

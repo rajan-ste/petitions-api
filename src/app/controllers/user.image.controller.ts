@@ -11,7 +11,7 @@ const getImage = async (req: Request, res: Response): Promise<void> => {
 
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {
-        res.status(404).send('Not Found. No user with specified ID, or user has no image')
+        res.status(404).send('Not Found. No user with specified ID, or user has no image');
         return;
     }
 
